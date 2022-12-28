@@ -1,11 +1,13 @@
 from tkinter import Tk, Label, Canvas, Button, PhotoImage
+from quiz_brain import QuizBrain
 
 THEME_COLOR = "#375362"
 def button_filler():
     pass
 
 class QuizInterface:
-    def __init__(self):
+    def __init__(self, quiz_brain):
+        self.quiz = quiz_brain
         self.window = Tk()
         self.window.title("Quizzler")
         self.window.config(bg=THEME_COLOR)
@@ -25,4 +27,10 @@ class QuizInterface:
         self.question_box.grid(row=1, column=0, padx=20, pady=20, columnspan=2)
         self.true_button.grid(row=2, column=0, pady=20)
         self.false_button.grid(row=2, column=1, pady=20)
+        self.get_next_question()
+        # Why is this not working?
         self.window.mainloop()
+
+    def get_next_question(self):
+        qtext = self.quiz.next_question()
+        self.question_box.itemconfig(self.question_text, text=qtext)
