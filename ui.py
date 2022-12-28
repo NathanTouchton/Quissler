@@ -6,7 +6,7 @@ def button_filler():
     pass
 
 class QuizInterface:
-    def __init__(self, quiz_brain):
+    def __init__(self, quiz_brain: QuizBrain):
         self.quiz = quiz_brain
         self.window = Tk()
         self.window.title("Quizzler")
