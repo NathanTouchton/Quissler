@@ -2,8 +2,9 @@ from tkinter import Tk, Label, Canvas, Button, PhotoImage
 from quiz_brain import QuizBrain
 
 THEME_COLOR = "#375362"
-def button_filler():
-    pass
+WHITE = "#ffffff"
+GREEN = "#45eb42"
+RED = "#ff1212"
 
 class QuizInterface:
     def __init__(self, quiz_brain: QuizBrain):
@@ -11,26 +12,44 @@ class QuizInterface:
         self.window = Tk()
         self.window.title("Quizzler")
         self.window.config(bg=THEME_COLOR)
-        self.score_display = Label(text="Score:0", bg=THEME_COLOR)
-        self.question_box = Canvas(height=250, width=300)
+        self.score_display = Label(text="Score:0", bg=THEME_COLOR, font=("Arial, 15"))
+        self.question_box = Canvas(height=250, width=300, bg=WHITE)
         self.question_text = self.question_box.create_text(
             150,
             125,
-            text="Test",
-            font=("Arial", 20, "italic")
+            text=" ",
+            font=("Arial", 20, "italic"),
+            width=280
         )
         self.true_image = PhotoImage(file="images/true.png")
         self.false_image = PhotoImage(file="images/false.png")
-        self.true_button = Button(image=self.true_image, command=button_filler)
-        self.false_button = Button(image=self.false_image, command=button_filler)
+        self.true_button = Button(image=self.true_image, command=self.true_func)
+        self.false_button = Button(image=self.false_image, command=self.false_func)
         self.score_display.grid(row=0, column=1, pady=20)
         self.question_box.grid(row=1, column=0, padx=20, pady=20, columnspan=2)
         self.true_button.grid(row=2, column=0, pady=20)
         self.false_button.grid(row=2, column=1, pady=20)
         self.get_next_question()
-        # Why is this not working?
         self.window.mainloop()
+    
+    def true_func(self):
+        self.give_feedback(self.quiz.check_answer("true"))
+
+    def false_func(self):
+        self.give_feedback(self.quiz.check_answer("false"))
 
     def get_next_question(self):
         qtext = self.quiz.next_question()
         self.question_box.itemconfig(self.question_text, text=qtext)
+        self.score_display.configure(text=f"Score:{self.quiz.score}")
+
+    def give_feedback(self, is_right: bool):
+        if is_right is True:
+            self.question_box.configure(bg=GREEN)
+        elif is_right is False:
+            self.question_box.configure(bg=RED)
+        self.question_box.after(1300, self.reset_box)
+    
+    def reset_box(self):
+        self.question_box.configure(bg=WHITE)
+        self.get_next_question()
