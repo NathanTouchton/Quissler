@@ -12,13 +12,20 @@ class QuizInterface:
         self.window = Tk()
         self.window.title("Quizzler")
         self.window.config(bg=THEME_COLOR)
-        self.score_display = Label(text="Score:0", bg=THEME_COLOR, font=("Arial, 15"))
+        self.score_display = Label(text="Score:0/10", bg=THEME_COLOR, font=("Arial", 15))
         self.question_box = Canvas(height=250, width=300, bg=WHITE)
+        # self.question_text = self.question_box.create_text(
+        #     150,
+        #     125,
+        #     text=" ",
+        #     font=("Arial", 20, "italic"),
+        #     width=280
+        # )
         self.question_text = self.question_box.create_text(
             150,
             125,
             text=" ",
-            font=("Arial", 20, "italic"),
+            font=("Arial", 11, "italic"),
             width=280
         )
         self.true_image = PhotoImage(file="images/true.png")
@@ -31,7 +38,7 @@ class QuizInterface:
         self.false_button.grid(row=2, column=1, pady=20)
         self.get_next_question()
         self.window.mainloop()
-    
+
     def true_func(self):
         self.give_feedback(self.quiz.check_answer("true"))
 
@@ -41,7 +48,7 @@ class QuizInterface:
     def get_next_question(self):
         qtext = self.quiz.next_question()
         self.question_box.itemconfig(self.question_text, text=qtext)
-        self.score_display.configure(text=f"Score:{self.quiz.score}")
+        self.score_display.configure(text=f"Score:{self.quiz.score}/10")
 
     def give_feedback(self, is_right: bool):
         if is_right is True:
@@ -49,7 +56,10 @@ class QuizInterface:
         elif is_right is False:
             self.question_box.configure(bg=RED)
         self.question_box.after(1300, self.reset_box)
-    
+
     def reset_box(self):
         self.question_box.configure(bg=WHITE)
-        self.get_next_question()
+        if self.quiz.question_number < 10:
+            self.get_next_question()
+        elif self.quiz.question_number >= 10:
+            self.question_box.itemconfig(self.question_text, text="Game Over")
